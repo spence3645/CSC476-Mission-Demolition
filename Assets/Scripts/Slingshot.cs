@@ -27,9 +27,16 @@ public class Slingshot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Aiming();
+    }
+
+    void Aiming()
+    {
         if (b_aiming)
         {
-            Vector2 mousePos = Input.mousePosition;
+            Vector3 mousePos = Input.mousePosition;
+
+            mousePos.z = -Camera.main.transform.position.z;
 
             Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
 
@@ -37,7 +44,7 @@ public class Slingshot : MonoBehaviour
 
             float maxMagnitude = this.GetComponent<SphereCollider>().radius;
 
-            if(mouseDelta.magnitude > maxMagnitude)
+            if (mouseDelta.magnitude > maxMagnitude)
             {
                 mouseDelta.Normalize();
                 mouseDelta *= maxMagnitude;
@@ -49,8 +56,12 @@ public class Slingshot : MonoBehaviour
             if (Input.GetMouseButtonUp(0))
             {
                 b_aiming = false;
+
                 projectileRigid.isKinematic = false;
                 projectileRigid.velocity = -mouseDelta * velocity;
+
+                FollowCam.POI = projectile;
+
                 projectile = null;
             }
         }
