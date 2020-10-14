@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Slingshot : MonoBehaviour
 {
+    static private Slingshot S;
+
     [Header("Set in Inspector")]
     public GameObject projectilePrefab;
     public float velocity = 8f;
@@ -14,6 +16,23 @@ public class Slingshot : MonoBehaviour
     public Rigidbody projectileRigid;
     public Vector3 launchPos;
     public bool b_aiming;
+
+    static public Vector3 LAUNCH_POS
+    {
+        get
+        {
+            if(S == null)
+            {
+                return Vector3.zero;
+            }
+            return S.launchPos;
+        }
+    }
+
+    void Awake()
+    {
+        S = this;
+    }
 
     // Start is called before the first frame update
     void Start()

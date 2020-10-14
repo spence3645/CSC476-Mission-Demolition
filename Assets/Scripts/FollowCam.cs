@@ -20,20 +20,35 @@ public class FollowCam : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(POI != null)
+        Vector3 destination;
+
+        if (POI != null)
         {
-            Vector3 destination = POI.transform.position;
+            destination = POI.transform.position;
 
-            destination.x = Mathf.Max(minXY.x, destination.x);
-            destination.y = Mathf.Max(minXY.y, destination.y);
-
-            destination = Vector3.Lerp(transform.position, destination, easing);
-
-            destination.z = cameraZ;
-
-            transform.position = destination;
-
-            Camera.main.orthographicSize = destination.y + 10;
+            if(POI.tag == "Projectile")
+            {
+                if (POI.GetComponent<Rigidbody>().IsSleeping())
+                {
+                    POI = null;
+                    return;
+                }
+            }
         }
+        else
+        {
+            destination = Vector3.zero;
+        }
+
+        destination.x = Mathf.Max(minXY.x, destination.x);
+        destination.y = Mathf.Max(minXY.y, destination.y);
+
+        destination = Vector3.Lerp(transform.position, destination, easing);
+
+        destination.z = cameraZ;
+
+        transform.position = destination;
+
+        Camera.main.orthographicSize = destination.y + 10;
     }
 }
