@@ -12,7 +12,7 @@ public class CloudCrafter : MonoBehaviour
 
     public float cloudScaleMin = 1;
     public float cloudScaleMax = 3;
-    public float cloudSpeed = 0.5f;
+    public float cloudSpeed = 60f;
 
     public GameObject cloudPrefab;
 
@@ -56,7 +56,9 @@ public class CloudCrafter : MonoBehaviour
             float scaleVal = cloud.transform.localScale.x;
             Vector3 cPos = cloud.transform.position;
 
-            cPos.x -= scaleVal * Time.deltaTime * cloudSpeed;
+            float speedVal = cloudSpeed / cPos.z;
+
+            cPos.x -= scaleVal * Time.deltaTime * speedVal;
 
             if(cPos.x <= cloudPosMin.x)
             {

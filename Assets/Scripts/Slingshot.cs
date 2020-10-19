@@ -9,10 +9,13 @@ public class Slingshot : MonoBehaviour
     [Header("Set in Inspector")]
     public GameObject projectilePrefab;
     public float velocity = 8f;
+    public float minDist = 0.1f;
 
     [Header("Set Dynamically")]
     public GameObject launchPoint;
     public GameObject projectile;
+    public LineRenderer bandLeft;
+    public LineRenderer bandRight;
     public Rigidbody projectileRigid;
     public Vector3 launchPos;
     public bool b_aiming;
@@ -39,6 +42,9 @@ public class Slingshot : MonoBehaviour
     {
         launchPoint = transform.Find("LaunchPoint").gameObject;
         launchPos = launchPoint.transform.position;
+
+        bandLeft = transform.Find("BandLeft").GetComponent<LineRenderer>();
+        bandRight = transform.Find("BandRight").GetComponent<LineRenderer>();
 
         launchPoint.SetActive(false);
     }
@@ -70,10 +76,17 @@ public class Slingshot : MonoBehaviour
             }
 
             Vector3 projPos = launchPos + mouseDelta;
+
             projectile.transform.position = projPos;
+
+            bandLeft.SetPosition(0, mouseDelta);
+            bandRight.SetPosition(1, mouseDelta);
 
             if (Input.GetMouseButtonUp(0))
             {
+                bandLeft.SetPosition(0, new Vector3(0, 0, 0));
+                bandRight.SetPosition(1, new Vector3(0,0,0));
+
                 b_aiming = false;
 
                 projectileRigid.isKinematic = false;
