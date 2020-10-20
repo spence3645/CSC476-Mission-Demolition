@@ -8,10 +8,15 @@ public class ProjectileLine : MonoBehaviour
 
     [Header("Set in Inspector")]
     public float minDist = 0.1f;
+    public LineRenderer linePrefab;
 
-    private LineRenderer line;
+    //private LineRenderer line;
     private GameObject _poi;
     private List<Vector3> points;
+
+    public List<LineRenderer> lines;
+    public int numOfLines = 3;
+    private int currentIndex = 0;
 
     public GameObject poi
     {
@@ -25,9 +30,11 @@ public class ProjectileLine : MonoBehaviour
 
             if(_poi != null)
             {
-                line.enabled = false;
+                NewLine();
+
+                //line.enabled = false;
                 points = new List<Vector3>();
-                AddPoint();
+                AddPointTest(lines[currentIndex]);
             }
         }
     }
@@ -49,9 +56,11 @@ public class ProjectileLine : MonoBehaviour
     {
         S = this;
 
-        line = GetComponent<LineRenderer>();
+        //line = GetComponent<LineRenderer>();
 
-        line.enabled = false;
+        //line.enabled = false;
+
+        lines = new List<LineRenderer>();
 
         points = new List<Vector3>();
     }
@@ -77,7 +86,7 @@ public class ProjectileLine : MonoBehaviour
             }
         }
 
-        AddPoint();
+        AddPointTest(lines[currentIndex]);
 
         if (FollowCam.POI == null)
         {
@@ -88,7 +97,7 @@ public class ProjectileLine : MonoBehaviour
     public void Clear()
     {
         _poi = null;
-        line.enabled = false;
+        //line.enabled = false;
         points = new List<Vector3>();
     }
 
@@ -108,17 +117,70 @@ public class ProjectileLine : MonoBehaviour
             points.Add(pt + launchPosDiff);
             points.Add(pt);
 
-            line.positionCount = 2;
-            line.SetPosition(0, points[0]);
-            line.SetPosition(1, points[1]);
-            line.enabled = true;
+            //line.positionCount = 2;
+            //line.SetPosition(0, points[0]);
+            //line.SetPosition(1, points[1]);
+            //line.enabled = true;
         }
         else
         {
             points.Add(pt);
-            line.positionCount = points.Count;
-            line.SetPosition(points.Count - 1, lastPoint);
-            line.enabled = true;
+            //line.positionCount = points.Count;
+            //line.SetPosition(points.Count - 1, lastPoint);
+            //line.enabled = true;
+        }
+    }
+
+
+    void NewLine()
+    {
+        LineRenderer l = Instantiate<LineRenderer>(linePrefab);
+
+        if(lines.Count == 0)
+        {
+            lines.Insert(currentIndex, l);
+            currentIndex = lines.Count - 1;
+            return;
+        }
+
+        if(lines.Count < numOfLines)
+        {
+            currentIndex = lines.Count - 1;
+            lines.Insert(currentIndex, l);
+        }
+        else
+        {
+            Destroy(lines[lines.Count - 1]);
+            lines.RemoveAt(lines.Count - 1);
+            lines.Insert(0, l);
+        }
+    }
+
+    public void AddPointTest(LineRenderer l)
+    {
+        Vector3 pt = _poi.transform.position;
+
+        Vector3 lastPos = l.GetPosition(l.positionCount-1);
+
+        Debug.Log(pt);
+
+        if (l.positionCount > 0 && (pt - lastPos).magnitude < minDist)
+        {
+            return;
+        }
+
+        if (l.positionCount == 0)
+        {
+            Vector3 launchPosDiff = pt - Slingshot.LAUNCH_POS;
+
+            l.positionCount = 2;
+            l.SetPosition(0, pt+launchPosDiff);
+            l.SetPosition(1, pt);
+        }
+        else
+        {
+            l.positionCount++;
+            l.SetPosition(l.positionCount-1, pt);
         }
     }
 }

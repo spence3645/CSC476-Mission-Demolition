@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using UnityEngine;
 
 public class Slingshot : MonoBehaviour
@@ -79,8 +80,10 @@ public class Slingshot : MonoBehaviour
 
             projectile.transform.position = projPos;
 
-            bandLeft.SetPosition(0, mouseDelta);
-            bandRight.SetPosition(1, mouseDelta);
+            Vector3 bandPos = new Vector3(mouseDelta.x - 0.5f, mouseDelta.y - 0.7f, mouseDelta.z);
+
+            bandLeft.SetPosition(0, bandPos);
+            bandRight.SetPosition(1, bandPos);
 
             if (Input.GetMouseButtonUp(0))
             {
